@@ -89,6 +89,33 @@ input { caret-color: var(--tomato); }
 .text-link { display: inline-flex; align-items: center; gap: 7px; border: 0; background: transparent; color: var(--blue); font-size: 12px; font-weight: 700; }
 .text-link .icon { width: 14px; height: 14px; }
 .text-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+.detail-link { flex: none; padding: 0; font-size: 10px; }
+.project-detail-dialog { width: min(620px, calc(100vw - 32px)); max-width: none; max-height: min(850px, calc(100svh - 40px)); padding: 0; overflow: hidden; border: 2px solid var(--ink); background: var(--card); color: var(--ink); box-shadow: 8px 8px 0 var(--ink); }
+.project-detail-dialog::backdrop { background: rgb(17 17 17 / 58%); backdrop-filter: blur(2px); }
+.project-detail-sheet { max-height: min(850px, calc(100svh - 40px)); overflow: auto; overscroll-behavior: contain; }
+.project-detail-header { position: sticky; top: 0; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 13px 17px; border-bottom: 1px solid color-mix(in srgb, var(--ink) 24%, transparent); background: var(--card); }
+.project-detail-category { color: var(--blue); font: 9px var(--mono); letter-spacing: .08em; text-transform: uppercase; }
+.project-detail-header .icon-button { width: 34px; height: 34px; }
+.project-detail-header .icon { width: 16px; }
+.project-detail-art { height: 220px; overflow: hidden; border-bottom: 2px solid var(--ink); background: var(--soft); }
+.project-detail-art .project-illustration, .project-detail-art .project-image { height: 100%; object-fit: cover; }
+.project-detail-content { padding: 23px clamp(20px, 5vw, 38px) 30px; }
+.project-detail-content h2 { margin: 0; font-size: clamp(30px, 6vw, 43px); line-height: 1; letter-spacing: -.055em; overflow-wrap: anywhere; }
+.project-demo-badge { display: inline-flex; margin-top: 12px; padding: 6px 8px; border: 1px solid var(--tomato); color: var(--tomato); font: 8px var(--mono); letter-spacing: .05em; text-transform: uppercase; }
+.project-detail-description { max-width: 58ch; margin: 15px 0 22px; color: var(--muted); font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+.project-detail-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; border-top: 1px solid color-mix(in srgb, var(--ink) 28%, transparent); }
+.project-detail-facts > div { min-width: 0; padding: 13px 12px 13px 0; border-bottom: 1px solid color-mix(in srgb, var(--ink) 20%, transparent); }
+.project-detail-facts dt { color: var(--muted); font: 8px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+.project-detail-facts dd { margin: 5px 0 0; font-size: 12px; font-weight: 700; overflow-wrap: anywhere; }
+.project-detail-topics { margin-top: 20px; }
+.project-detail-topics h3 { margin: 0; font: 9px var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+.project-detail-topics p { margin: 8px 0 0; color: var(--muted); font-size: 11px; }
+.project-detail-topics .tag-row { margin-top: 9px; }
+.project-detail-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.project-detail-links .button { min-height: 42px; padding: 10px 13px; font-size: 11px; }
+.project-detail-links .icon { width: 15px; }
+.mini-detail-link { margin-top: 13px; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--ink) 20%, transparent); }
+.chat-detail-button { margin-left: auto; padding: 5px 7px; border: 1px solid color-mix(in srgb, var(--ink) 50%, transparent); background: var(--card); color: var(--blue); font-size: 9px; white-space: nowrap; }
 
 /* Swipe card */
 .swipe-layout { display: grid; grid-template-columns: minmax(320px, 550px) minmax(230px, 1fr); align-items: center; gap: clamp(32px, 6vw, 100px); min-height: min(650px, calc(100vh - 230px)); }
@@ -343,6 +370,12 @@ input { caret-color: var(--tomato); }
   .chat-modal { width: min(100%, 460px); margin: 0 auto; animation: rise-in .22s both; }
   .chat-modal .chat-body { max-height: min(68svh, 540px); overflow-y: auto; }
   .chat-modal .chat-stream { max-height: min(24svh, 175px); }
+  .project-detail-dialog { position: fixed; inset: auto 0 0; width: 100%; max-height: 88svh; margin: 0; border-right: 0; border-bottom: 0; border-left: 0; box-shadow: 0 -5px 0 var(--ink); animation: rise-in .22s ease both; }
+  .project-detail-sheet { max-height: 88svh; }
+  .project-detail-art { height: clamp(150px, 24vh, 220px); }
+  .project-detail-content { padding-top: 19px; }
+  .chat-project-chip { gap: 7px; }
+  .chat-detail-button { padding: 5px; font-size: 8px; }
   .project-count { padding: 7px; font-size: 7px; }
   .project-controls { align-items: stretch; flex-direction: column; margin-top: 0; }
   .project-search { width: 100%; }
