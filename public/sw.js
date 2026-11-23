@@ -6,6 +6,8 @@ const SHELL = [
   OFFLINE_URL,
   new URL('manifest.webmanifest', BASE_URL).href,
   new URL('pwa-icon.svg', BASE_URL).href,
+  new URL('icons/icon-192.png', BASE_URL).href,
+  new URL('icons/icon-512.png', BASE_URL).href,
   new URL('favicon.svg', BASE_URL).href,
   new URL('data/projects.json', BASE_URL).href,
 ];
