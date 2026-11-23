@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-23T15:00:00+01:00",
+  "title": "Design System: Le Baron",
+  "extensions": {
+    "colorMeta": {
+      "paper": { "role": "neutral", "displayName": "Mineral Paper", "canonical": "#f3f0e8", "tonalRamp": ["oklch(15% 0.01 85)", "oklch(25% 0.01 85)", "oklch(35% 0.01 85)", "oklch(45% 0.01 85)", "oklch(55% 0.01 85)", "oklch(65% 0.01 85)", "oklch(75% 0.01 85)", "oklch(95% 0.01 85)"] },
+      "map-ground": { "role": "neutral", "displayName": "Map Ground", "canonical": "#faf9f4", "tonalRamp": ["oklch(15% 0.01 95)", "oklch(25% 0.01 95)", "oklch(35% 0.01 95)", "oklch(45% 0.01 95)", "oklch(55% 0.01 95)", "oklch(65% 0.01 95)", "oklch(75% 0.01 95)", "oklch(95% 0.01 95)"] },
+      "surface": { "role": "neutral", "displayName": "Chalk Surface", "canonical": "#fffefa", "tonalRamp": ["oklch(15% 0.01 95)", "oklch(25% 0.01 95)", "oklch(35% 0.01 95)", "oklch(45% 0.01 95)", "oklch(55% 0.01 95)", "oklch(65% 0.01 95)", "oklch(75% 0.01 95)", "oklch(95% 0.01 95)"] },
+      "soft": { "role": "neutral", "displayName": "Soft Stone", "canonical": "#e9e7df", "tonalRamp": ["oklch(15% 0.01 95)", "oklch(25% 0.01 95)", "oklch(35% 0.01 95)", "oklch(45% 0.01 95)", "oklch(55% 0.01 95)", "oklch(65% 0.01 95)", "oklch(75% 0.01 95)", "oklch(95% 0.01 95)"] },
+      "ink": { "role": "neutral", "displayName": "Slate Ink", "canonical": "#202c3b", "tonalRamp": ["oklch(15% 0.02 250)", "oklch(25% 0.02 250)", "oklch(35% 0.02 250)", "oklch(45% 0.02 250)", "oklch(55% 0.02 250)", "oklch(65% 0.02 250)", "oklch(75% 0.02 250)", "oklch(95% 0.02 250)"] },
+      "navy": { "role": "neutral", "displayName": "Station Navy", "canonical": "#192d45", "tonalRamp": ["oklch(15% 0.04 250)", "oklch(25% 0.04 250)", "oklch(35% 0.04 250)", "oklch(45% 0.04 250)", "oklch(55% 0.04 250)", "oklch(65% 0.04 250)", "oklch(75% 0.04 250)", "oklch(95% 0.04 250)"] },
+      "muted": { "role": "neutral", "displayName": "Muted Slate", "canonical": "#526172", "tonalRamp": ["oklch(15% 0.03 250)", "oklch(25% 0.03 250)", "oklch(35% 0.03 250)", "oklch(45% 0.03 250)", "oklch(55% 0.03 250)", "oklch(65% 0.03 250)", "oklch(75% 0.03 250)", "oklch(95% 0.03 250)"] },
+      "line": { "role": "neutral", "displayName": "Fine Cartography", "canonical": "#c9c9c1", "tonalRamp": ["oklch(15% 0.005 100)", "oklch(25% 0.005 100)", "oklch(35% 0.005 100)", "oklch(45% 0.005 100)", "oklch(55% 0.005 100)", "oklch(65% 0.005 100)", "oklch(75% 0.005 100)", "oklch(95% 0.005 100)"] },
+      "line-strong": { "role": "neutral", "displayName": "Strong Cartography", "canonical": "#9ca5a9", "tonalRamp": ["oklch(15% 0.01 230)", "oklch(25% 0.01 230)", "oklch(35% 0.01 230)", "oklch(45% 0.01 230)", "oklch(55% 0.01 230)", "oklch(65% 0.01 230)", "oklch(75% 0.01 230)", "oklch(95% 0.01 230)"] },
+      "cobalt": { "role": "primary", "displayName": "Signal Cobalt", "canonical": "#1539d3", "tonalRamp": ["oklch(15% 0.22 265)", "oklch(25% 0.22 265)", "oklch(35% 0.22 265)", "oklch(45% 0.22 265)", "oklch(55% 0.22 265)", "oklch(65% 0.22 265)", "oklch(75% 0.22 265)", "oklch(95% 0.22 265)"] },
+      "coral": { "role": "secondary", "displayName": "Signal Coral", "canonical": "#e6533d", "tonalRamp": ["oklch(15% 0.17 35)", "oklch(25% 0.17 35)", "oklch(35% 0.17 35)", "oklch(45% 0.17 35)", "oklch(55% 0.17 35)", "oklch(65% 0.17 35)", "oklch(75% 0.17 35)", "oklch(95% 0.17 35)"] },
+      "sky": { "role": "tertiary", "displayName": "Open Sky", "canonical": "#3481b8", "tonalRamp": ["oklch(15% 0.11 245)", "oklch(25% 0.11 245)", "oklch(35% 0.11 245)", "oklch(45% 0.11 245)", "oklch(55% 0.11 245)", "oklch(65% 0.11 245)", "oklch(75% 0.11 245)", "oklch(95% 0.11 245)"] },
+      "lime": { "role": "tertiary", "displayName": "Field Lime", "canonical": "#a2bd29", "tonalRamp": ["oklch(15% 0.15 120)", "oklch(25% 0.15 120)", "oklch(35% 0.15 120)", "oklch(45% 0.15 120)", "oklch(55% 0.15 120)", "oklch(65% 0.15 120)", "oklch(75% 0.15 120)", "oklch(95% 0.15 120)"] },
+      "violet": { "role": "tertiary", "displayName": "Field Violet", "canonical": "#6956a8", "tonalRamp": ["oklch(15% 0.11 295)", "oklch(25% 0.11 295)", "oklch(35% 0.11 295)", "oklch(45% 0.11 295)", "oklch(55% 0.11 295)", "oklch(65% 0.11 295)", "oklch(75% 0.11 295)", "oklch(95% 0.11 295)"] },
+      "amber": { "role": "tertiary", "displayName": "Amber Marker", "canonical": "#bf7918", "tonalRamp": ["oklch(15% 0.13 65)", "oklch(25% 0.13 65)", "oklch(35% 0.13 65)", "oklch(45% 0.13 65)", "oklch(55% 0.13 65)", "oklch(65% 0.13 65)", "oklch(75% 0.13 65)", "oklch(95% 0.13 65)"] },
+      "active": { "role": "primary", "displayName": "Survey Lime", "canonical": "#d3f150", "tonalRamp": ["oklch(15% 0.15 115)", "oklch(25% 0.15 115)", "oklch(35% 0.15 115)", "oklch(45% 0.15 115)", "oklch(55% 0.15 115)", "oklch(65% 0.15 115)", "oklch(75% 0.15 115)", "oklch(95% 0.15 115)"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Barlow Condensed Display", "purpose": "View titles and high-level wayfinding headlines." },
+      "body": { "displayName": "Barlow Body", "purpose": "Readable interface copy, descriptions, and controls." },
+      "label": { "displayName": "DM Mono Metadata", "purpose": "Compact categories, coordinates, counts, and status labels." }
+    },
+    "shadows": [
+      { "name": "panel-lift", "value": "0 18px 42px rgba(26, 43, 66, .11)", "purpose": "Shared depth for map, project, and contact panels in light mode." },
+      { "name": "panel-lift-dark", "value": "0 18px 42px rgba(0, 0, 0, .28)", "purpose": "Shared panel depth in dark mode." }
+    ],
+    "motion": [
+      { "name": "control-feedback", "value": "0.18s–0.2s", "purpose": "Short color, border, transform, and shadow transitions on controls." },
+      { "name": "project-decision", "value": "0.42s cubic-bezier(.2, .8, .25, 1)", "purpose": "Swipe pass and like transitions for the active project card." },
+      { "name": "route-pulse", "value": "1s ease-in-out alternate", "purpose": "Dashed route activity indicator while project data is loading." },
+      { "name": "reduced-motion", "value": "0.01ms", "purpose": "All animation and transition durations are reduced when prefers-reduced-motion is enabled." }
+    ],
+    "breakpoints": [
+      { "name": "tablet", "value": "1100px" },
+      { "name": "mobile-nav", "value": "820px" },
+      { "name": "compact-mobile", "value": "560px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Lime-filled primary action; hover brightens and lifts.",
+      "html": "<button class=\"ds-button-primary\">Continue <span aria-hidden=\"true\">→</span></button>",
+      "css": ".ds-button-primary { display: inline-flex; min-height: 46px; align-items: center; justify-content: center; gap: 10px; padding: 11px 16px; border: 1px solid var(--active); border-radius: 10px; background: var(--active); color: #172433; font: 600 14px Barlow, Arial, sans-serif; cursor: pointer; transition: color .2s, background .2s, border-color .2s, transform .2s, box-shadow .2s; } .ds-button-primary:hover { border-color: #e2f886; background: #e2f886; transform: translateY(-2px); box-shadow: var(--shadow); } .ds-button-primary:focus-visible { outline: 3px solid var(--coral); outline-offset: 4px; } .ds-button-primary:active { transform: translateY(0); }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Surface-filled secondary action with a neutral border.",
+      "html": "<button class=\"ds-button-secondary\">View repository</button>",
+      "css": ".ds-button-secondary { display: inline-flex; min-height: 46px; align-items: center; justify-content: center; gap: 10px; padding: 11px 16px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); font: 600 14px Barlow, Arial, sans-serif; cursor: pointer; transition: color .2s, background .2s, border-color .2s, transform .2s, box-shadow .2s; } .ds-button-secondary:hover { transform: translateY(-2px); box-shadow: var(--shadow); } .ds-button-secondary:focus-visible { outline: 3px solid var(--coral); outline-offset: 4px; } .ds-button-secondary:active { transform: translateY(0); }"
+    },
+    {
+      "name": "Icon Tool Button",
+      "kind": "button",
+      "refersTo": "icon-button",
+      "description": "Square surface control for theme and language tools.",
+      "html": "<button class=\"ds-icon-button\" aria-label=\"Change theme\"><span aria-hidden=\"true\">◐</span></button>",
+      "css": ".ds-icon-button { display: inline-grid; width: 39px; height: 39px; place-items: center; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink); font: 18px Barlow, Arial, sans-serif; cursor: pointer; transition: border-color .18s, background .18s, transform .18s; } .ds-icon-button:hover { border-color: var(--cobalt); background: var(--soft); transform: translateY(-1px); } .ds-icon-button:focus-visible { outline: 3px solid var(--coral); outline-offset: 4px; }"
+    },
+    {
+      "name": "Category Filter",
+      "kind": "chip",
+      "refersTo": "category-filter",
+      "description": "Compact filter with a dark selected state and cobalt hover cue.",
+      "html": "<button class=\"ds-category-filter\">JavaScript <span>08</span></button>",
+      "css": ".ds-category-filter { display: inline-flex; min-height: 34px; align-items: center; gap: 9px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: transparent; color: var(--muted); font: 600 11px Barlow, Arial, sans-serif; cursor: pointer; transition: background .2s, color .2s, border-color .2s; } .ds-category-filter span { color: inherit; font: 10px 'DM Mono', ui-monospace, monospace; opacity: .78; } .ds-category-filter:hover { border-color: var(--cobalt); color: var(--cobalt); } .ds-category-filter[aria-pressed=\"true\"] { border-color: var(--navy); background: var(--navy); color: #fff; } .ds-category-filter:focus-visible { outline: 3px solid var(--coral); outline-offset: 4px; }"
+    },
+    {
+      "name": "Map Panel",
+      "kind": "card",
+      "refersTo": "map-panel",
+      "description": "Borded, softly elevated frame for the repository network map.",
+      "html": "<section class=\"ds-map-panel\"><header>Project map <small>48.8566° N · 2.3522° E</small></header><div class=\"ds-map-panel-body\"><span>Repository destinations</span></div></section>",
+      "css": ".ds-map-panel { overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--map-ground); color: var(--ink); box-shadow: var(--shadow); font-family: Barlow, Arial, sans-serif; } .ds-map-panel header { display: flex; min-height: 50px; align-items: center; justify-content: space-between; gap: 14px; padding: 0 17px; border-bottom: 1px solid var(--line); font: 600 15px 'Barlow Condensed', 'Arial Narrow', sans-serif; } .ds-map-panel header small { color: var(--muted); font: 500 9px 'DM Mono', ui-monospace, monospace; } .ds-map-panel-body { display: grid; min-height: 120px; place-items: center; color: var(--muted); font: 500 9px 'DM Mono', ui-monospace, monospace; text-transform: uppercase; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Metadata Transit Map",
+    "overview": "Le Baron presents Jules’s public repositories as destinations in a compact, navigable atlas. The surface combines mineral paper tones, dark station-like headings, condensed display type, and small monospaced coordinates. Project artwork is generated from repository facts and CSS/SVG geometry; the map is a visual index that helps visitors explore the catalogue.\n\nThe interface supports French and English, light and dark themes, and the same project discovery, category, saved-match, and profile areas across screen sizes. A map route means only that projects share a category or programming language. It does not describe dependencies, imports, or technical relationships.",
+    "keyCharacteristics": ["A paper-and-ink base with bright route colors and a lime active state.", "Condensed Barlow headlines paired with readable Barlow body copy and DM Mono metadata.", "Repository facts shape the project map and CSS/SVG artwork.", "Responsive, touch-ready project exploration with reduced-motion support."],
+    "rules": [
+      { "name": "The Metadata Route Rule", "body": "Route colors and connecting lines encode shared category or language only; never describe them as code dependencies or architecture.", "section": "colors" },
+      { "name": "The Active Lime Rule", "body": "Use lime to identify selection and primary action, keeping category identity with the route palette.", "section": "colors" },
+      { "name": "The Three Register Rule", "body": "Use condensed Barlow for hierarchy, Barlow for reading, and DM Mono for factual metadata and compact labels.", "section": "typography" }
+    ],
+    "dos": ["Do preserve the warm paper, chalk surface, and slate ink relationships in light mode; use the implemented dark theme mappings when a dark theme is needed.", "Do keep repository category and language as the only semantics represented by map connections.", "Do use Barlow Condensed for display hierarchy, Barlow for reading, and DM Mono for metadata.", "Do retain the four-item bottom navigation and safe-area spacing at mobile sizes.", "Do respect `prefers-reduced-motion`; the interface reduces animation and transition duration when requested."],
+    "donts": ["Don't call map connections dependencies, imports, or architecture; category/language sharing is their complete meaning.", "Don't introduce raster artwork as if it were an existing portfolio asset; project visuals are currently composed in CSS/SVG from metadata.", "Don't use the demo profile content as confirmed biographical claims; the interface marks it as sample material."]
+  }
+}
