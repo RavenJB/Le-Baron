@@ -1,0 +1,71 @@
+{
+  "R6.06_PHP_Bug": {
+    "category": "PHP",
+    "featured": false,
+    "image": "",
+    "description": {
+      "fr": "[DEMO] Décris ici le problème PHP étudié, ta démarche et la correction apportée.",
+      "en": "[DEMO] Describe the PHP issue, your approach, and the fix you implemented here."
+    },
+    "message": {
+      "fr": "[DEMO] Un bug bien compris est déjà à moitié corrigé. Je te raconterai les détails de cette enquête ici !",
+      "en": "[DEMO] A well-understood bug is halfway fixed. I’ll share the details of this little investigation here!"
+    }
+  },
+  "template-nodeJs": {
+    "category": "JavaScript",
+    "featured": false,
+    "image": "",
+    "description": { "fr": "[DEMO] Présente ici ce modèle Node.js et les choix que tu as faits.", "en": "[DEMO] Describe this Node.js starter and the choices you made here." },
+    "message": { "fr": "[DEMO] Les bons projets commencent souvent par un bon point de départ. Ce dépôt en est peut-être un !", "en": "[DEMO] Good projects often start with a good foundation. This repository might be one!" }
+  },
+  "nuit-info": {
+    "category": "Web",
+    "featured": false,
+    "image": "",
+    "description": { "fr": "[DEMO] Ajoute ici le contexte, ton rôle et le résultat du projet Nuit de l’Info.", "en": "[DEMO] Add the context, your role, and the outcome of this Nuit de l’Info project here." },
+    "message": { "fr": "[DEMO] Une nuit, une équipe et une idée à transformer en quelque chose de concret. Le récit arrive bientôt !", "en": "[DEMO] One night, a team, and an idea to turn into something real. The story is coming soon!" }
+  },
+  "RavenJB.github.io": {
+    "category": "Web",
+    "featured": false,
+    "image": "",
+    "description": { "fr": "[DEMO] Présente ici ce que tu as construit sur ce site personnel.", "en": "[DEMO] Describe what you built for this personal website here." },
+    "message": { "fr": "[DEMO] Un autre petit bout du web signé Jules. Je te laisse découvrir les coulisses !", "en": "[DEMO] Another little corner of the web by Jules. Take a peek behind the scenes!" }
+  },
+  "R6.06_PHP_Bug_Correction": {
+    "category": "PHP",
+    "featured": false,
+    "image": "",
+    "description": { "fr": "[DEMO] Résume ici la correction et les apprentissages associés.", "en": "[DEMO] Summarize the fix and what you learned from it here." },
+    "message": { "fr": "[DEMO] Les petites corrections racontent souvent de grandes leçons. À toi de me dire laquelle !", "en": "[DEMO] Small fixes often come with big lessons. I’ll let you decide which one!" }
+  },
+  "Formulaire-nuit-info": {
+    "category": "Web",
+    "featured": false,
+    "image": "",
+    "description": { "fr": "[DEMO] Décris ici le rôle de ce formulaire dans le projet Nuit de l’Info.", "en": "[DEMO] Describe this form’s role in the Nuit de l’Info project here." },
+    "message": { "fr": "[DEMO] Un formulaire peut être le début d’une bonne idée. Celui-ci mérite son histoire !", "en": "[DEMO] A form can be the start of a good idea. This one deserves its own story!" }
+  },
+  "Food": {
+    "category": "Web",
+    "featured": false,
+    "image": "",
+    "description": { "fr": "[DEMO] Ajoute ici le concept et les fonctionnalités de ce projet.", "en": "[DEMO] Add this project’s concept and features here." },
+    "message": { "fr": "[DEMO] Ça mijote quelque chose dans ce dépôt. Je compléterai la recette bientôt !", "en": "[DEMO] Something’s cooking in this repository. I’ll add the recipe soon!" }
+  },
+  "Devoir": {
+    "category": "Études",
+    "featured": false,
+    "image": "",
+    "description": { "fr": "[DEMO] Remplace cette description par le contexte et le sujet du projet.", "en": "[DEMO] Replace this with the project’s context and topic." },
+    "message": { "fr": "[DEMO] Un projet d’étude peut cacher beaucoup d’ingéniosité. Je te montre ça bientôt !", "en": "[DEMO] A coursework project can hide plenty of ingenuity. I’ll show you soon!" }
+  },
+  "Le-Baron": {
+    "category": "Web",
+    "featured": false,
+    "image": "",
+    "description": { "fr": "[DEMO] Le portfolio interactif de Jules.", "en": "[DEMO] Jules’s interactive portfolio." },
+    "message": { "fr": "Tu es déjà dessus ! Le Baron est en train de prendre forme, carte après carte.", "en": "You’re already here! Le Baron is taking shape, one card at a time." }
+  }
+}

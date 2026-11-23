@@ -1,0 +1,15 @@
+{
+  "name": "le-baron-portfolio",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run fetch:projects && vite build",
+    "preview": "vite preview",
+    "fetch:projects": "node scripts/fetch-projects.mjs"
+  },
+  "devDependencies": {
+    "vite": "^8.0.0"
+  }
+}
