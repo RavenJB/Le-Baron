@@ -1,0 +1,15 @@
+{
+  "id": "/Le-Baron/",
+  "name": "Le Baron — Jules",
+  "short_name": "Le Baron",
+  "description": "Le portfolio interactif de Jules, projet après projet.",
+  "lang": "fr",
+  "start_url": "/Le-Baron/",
+  "scope": "/Le-Baron/",
+  "display": "standalone",
+  "background_color": "#f6f1e7",
+  "theme_color": "#f6f1e7",
+  "icons": [
+    { "src": "/Le-Baron/pwa-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

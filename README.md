@@ -33,6 +33,14 @@ Après un like, la conversation commence par le message personnalisé du projet.
 
 Pour brancher un vrai modèle conversationnel, ajoute une fonction côté serveur ou serverless qui détient la clé API. Ne place jamais cette clé dans le JavaScript livré par GitHub Pages.
 
+## Explorer, partager et installer
+
+- L’onglet Catégories permet de chercher dans les noms, descriptions, langages et sujets, puis de trier les dépôts par date, étoiles ou nom.
+- Chaque carte peut être partagée avec un lien direct vers le projet dans Le Baron. Le bouton utilise le partage natif lorsqu’il est disponible, sinon copie le lien.
+- Le parcours express sélectionne jusqu’à trois dépôts à partir de leur mise en avant et de leurs étoiles GitHub. « Surprends-moi » en choisit un au hasard.
+- Likes, matchs et conversations sont stockés uniquement dans le navigateur. Le profil permet de les effacer sans supprimer la langue ou le thème.
+- Le manifeste et le service worker rendent le site installable et gardent en cache l’application et les dépôts déjà chargés. Le bouton Installer apparaît dans le profil; si le navigateur ne propose pas l’installation automatique, utilise son menu « Ajouter à l’écran d’accueil ».
+
 ## Modifier les informations du profil
 
 Les textes de l’interface et les éléments du profil se trouvent dans `data/translations/fr.json` et `data/translations/en.json`. Mets à jour les deux fichiers pour conserver les deux langues. Les coordonnées ne sont volontairement pas renseignées.

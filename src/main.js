@@ -9,9 +9,14 @@ const safeRead = (key, fallback) => { try { return JSON.parse(localStorage.getIt
 const state = {
   lang: localStorage.getItem('le-baron-language') || '',
   theme: localStorage.getItem('le-baron-theme') || 'light',
-  tab: location.hash.slice(1) || 'swipe',
+  tab: ['swipe', 'categories', 'matches', 'profile'].includes(location.hash.slice(1)) ? location.hash.slice(1) : 'swipe',
   projects: [],
   filter: '',
+  search: '',
+  sort: 'recent',
+  discovery: false,
+  focusProjectId: location.hash.startsWith('#project=') ? decodeURIComponent(location.hash.slice(9)) : '',
+  installPrompt: null,
   history: safeRead('le-baron-history', []),
   matches: safeRead('le-baron-matches', []),
   chatMessages: safeRead('le-baron-chat-messages', {}),
@@ -25,9 +30,29 @@ const state = {
 
 const t = (key) => key.split('.').reduce((value, part) => value?.[part], LOCALES[state.lang || 'fr']) ?? key;
 const escapeHTML = (value = '') => String(value).replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+const visibleProjects = () => {
+  const query = state.search.trim().toLocaleLowerCase(state.lang);
+  const results = state.projects.filter((project) => {
+    if (state.filter && project.category !== state.filter) return false;
+    if (!query) return true;
+    return [project.name, project.language, project.category, project.description, ...(project.topics || [])].some((value) => localize(value).toLocaleLowerCase(state.lang).includes(query));
+  });
+  return results.sort((a, b) => state.sort === 'stars'
+    ? (b.stars || 0) - (a.stars || 0) || a.name.localeCompare(b.name)
+    : state.sort === 'name'
+      ? a.name.localeCompare(b.name)
+      : String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')) || a.name.localeCompare(b.name));
+};
 const currentProject = () => {
+  if (state.focusProjectId) {
+    const focused = state.projects.find((project) => String(project.id) === String(state.focusProjectId));
+    if (focused) return focused;
+  }
   const seen = new Set(state.history.map((item) => item.id));
-  return state.projects.find((project) => !seen.has(project.id) && (!state.filter || project.category === state.filter));
+  const pool = state.discovery
+    ? [...state.projects].sort((a, b) => Number(b.featured) - Number(a.featured) || (b.stars || 0) - (a.stars || 0) || String(b.updatedAt || '').localeCompare(String(a.updatedAt || ''))).slice(0, 3)
+    : state.projects;
+  return pool.find((project) => !seen.has(project.id) && (!state.filter || project.category === state.filter));
 };
 const localize = (value) => typeof value === 'string' ? value : value?.[state.lang] || value?.en || value?.fr || '';
 const icons = {
@@ -46,6 +71,7 @@ const icons = {
   sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>',
   moon: '<path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"/>',
   pin: '<path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
+  share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.7 6.8-4.4m-6.8 7 6.8 4.4"/>',
 };
 const icon = (name, cls = '') => `<svg class="icon ${cls}" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${icons[name] || icons.categories}</svg>`;
 const categoryIcon = (category) => {
@@ -106,7 +132,7 @@ function renderHeader() {
 
 function projectCard(project, index = 0, compact = false) {
   const desc = titleFor(project);
-  return `<article class="project-card ${compact ? 'compact-card' : ''}" data-project-id="${escapeHTML(project.id)}" style="--card-index:${index};--drag-x:${state.dragX}px;--drag-rot:${state.dragX * 0.045}deg"><div class="card-media">${visual(project)}${project.featured ? `<span class="featured-badge">${t('featured')}</span>` : ''}<span class="swipe-stamp like-stamp">LIKE</span><span class="swipe-stamp nope-stamp">NOPE</span></div><div class="card-content"><div class="card-overline"><span>${escapeHTML(categoryName(project.category))}</span><span class="card-index">${String(index + 1).padStart(2, '0')} <i>/</i> ${String(state.projects.length).padStart(2, '0')}</span></div><h2>${escapeHTML(project.name)}</h2><p class="card-description">${escapeHTML(desc)}</p><div class="tag-row">${(project.topics?.length ? project.topics.slice(0, 3) : [project.language || categoryName(project.category)]).map((tag) => `<span class="tag">${escapeHTML(tag)}</span>`).join('')}</div><div class="card-footer"><span class="repo-stats">${project.stars != null ? `${icon('star')} ${project.stars}` : ''}</span><a href="${escapeHTML(project.htmlUrl)}" target="_blank" rel="noreferrer" class="text-link">GitHub ${icon('arrow')}</a></div></div></article>`;
+  return `<article class="project-card ${compact ? 'compact-card' : ''}" data-project-id="${escapeHTML(project.id)}" style="--card-index:${index};--drag-x:${state.dragX}px;--drag-rot:${state.dragX * 0.045}deg"><div class="card-media">${visual(project)}${project.featured ? `<span class="featured-badge">${t('featured')}</span>` : ''}<button type="button" class="share-project" data-share-project="${escapeHTML(project.id)}" aria-label="${t('shareProject')}">${icon('share')}</button><span class="swipe-stamp like-stamp">LIKE</span><span class="swipe-stamp nope-stamp">NOPE</span></div><div class="card-content"><div class="card-overline"><span>${escapeHTML(categoryName(project.category))}</span><span class="card-index">${String(index + 1).padStart(2, '0')} <i>/</i> ${String(state.projects.length).padStart(2, '0')}</span></div><h2>${escapeHTML(project.name)}</h2><p class="card-description">${escapeHTML(desc)}</p><div class="tag-row">${(project.topics?.length ? project.topics.slice(0, 3) : [project.language || categoryName(project.category)]).map((tag) => `<span class="tag">${escapeHTML(tag)}</span>`).join('')}</div><div class="card-footer"><span class="repo-stats">${project.stars != null ? `${icon('star')} ${project.stars}` : ''}</span><a href="${escapeHTML(project.htmlUrl)}" target="_blank" rel="noreferrer" class="text-link">GitHub ${icon('arrow')}</a></div></div></article>`;
 }
 
 function renderChat(project, modal = false) {
@@ -162,13 +188,15 @@ function sendChat(projectId, text) {
 function renderSwipe() {
   const project = currentProject();
   const activeMatch = state.chatId && state.matches.find((match) => String(match.id) === String(state.chatId));
-  return `<section class="view swipe-view"><div class="view-heading"><div><p class="eyebrow">${state.filter ? escapeHTML(categoryName(state.filter)) : t('allProjects')}</p><h1>${t('swipeTitle')}<span class="period">.</span></h1><p class="view-subtitle">${t('swipeHint')}</p></div>${state.filter ? `<button class="text-link" data-action="clear-filter">${t('allCategories')}</button>` : ''}</div><div class="swipe-layout"><div class="swipe-stage">${project ? `<div class="card-stack">${state.projects.filter((candidate) => candidate.id !== project.id && (!state.filter || candidate.category === state.filter)).slice(-1).map((item) => `<div class="card-back">${visual(item)}</div>`).join('')}${projectCard(project)}</div><div class="swipe-actions"><button class="action-button action-pass" data-action="pass" aria-label="${t('nope')}">${icon('close')}<span>${t('nope')}</span></button><button class="action-button action-undo" data-action="undo" aria-label="${t('undo')}" ${state.history.length ? '' : 'disabled'}>${icon('arrow')}<span>${t('undo')}</span></button><button class="action-button action-like" data-action="like" aria-label="${t('like')}">${icon('matches')}<span>${t('like')}</span></button></div>` : `<div class="empty-state"><span class="empty-star">✳</span><h2>${t('emptyTitle')}</h2><p>${t('emptyText')}</p><button class="button button-primary" data-action="restart">${t('restart')} ${icon('arrow')}</button></div>`}</div><aside class="swipe-side">${activeMatch ? renderChat(activeMatch) : `<div class="side-note"><span class="side-note-mark">JB</span><p>${t('conversation')}</p><span>${t('matchesEmpty')}</span></div>`}</aside></div></section>${state.chatId && activeMatch ? `<div class="mobile-chat-overlay">${renderChat(activeMatch, true)}</div>` : ''}`;
+  const tools = `<div class="discovery-tools"><button class="button ${state.discovery ? 'button-primary' : 'button-secondary'}" data-action="discovery">${state.discovery ? t('discoveryStop') : t('discoveryStart')}</button><button class="text-link" data-action="surprise">${t('surpriseMe')} ${icon('sparkle')}</button></div>`;
+  return `<section class="view swipe-view"><div class="view-heading"><div><p class="eyebrow">${state.filter ? escapeHTML(categoryName(state.filter)) : t('allProjects')}</p><h1>${t('swipeTitle')}<span class="period">.</span></h1><p class="view-subtitle">${state.discovery ? t('discoveryHint') : t('swipeHint')}</p></div><div class="swipe-heading-actions">${tools}${state.filter ? `<button class="text-link" data-action="clear-filter">${t('allCategories')}</button>` : ''}</div></div><div class="swipe-layout"><div class="swipe-stage">${project ? `<div class="card-stack">${state.projects.filter((candidate) => candidate.id !== project.id && (!state.filter || candidate.category === state.filter)).slice(-1).map((item) => `<div class="card-back">${visual(item)}</div>`).join('')}${projectCard(project)}</div><div class="swipe-actions"><button class="action-button action-pass" data-action="pass" aria-label="${t('nope')}">${icon('close')}<span>${t('nope')}</span></button><button class="action-button action-undo" data-action="undo" aria-label="${t('undo')}" ${state.history.length ? '' : 'disabled'}>${icon('arrow')}<span>${t('undo')}</span></button><button class="action-button action-like" data-action="like" aria-label="${t('like')}">${icon('matches')}<span>${t('like')}</span></button></div>` : `<div class="empty-state"><span class="empty-star">✳</span><h2>${t('emptyTitle')}</h2><p>${t('emptyText')}</p><button class="button button-primary" data-action="restart">${t('restart')} ${icon('arrow')}</button></div>`}</div><aside class="swipe-side">${activeMatch ? renderChat(activeMatch) : `<div class="side-note"><span class="side-note-mark">JB</span><p>${t('conversation')}</p><span>${t('matchesEmpty')}</span></div>`}</aside></div></section>${state.chatId && activeMatch ? `<div class="mobile-chat-overlay">${renderChat(activeMatch, true)}</div>` : ''}`;
 }
 
 function renderCategories() {
+  const filtered = visibleProjects();
   const categories = [...new Set(state.projects.map((project) => project.category || 'Autre'))].sort((a, b) => categoryName(a).localeCompare(categoryName(b)));
-  const counts = new Map(categories.map((category) => [category, state.projects.filter((project) => project.category === category).length]));
-  return `<section class="view categories-view"><div class="view-heading"><div><p class="eyebrow">${t('allProjects')}</p><h1>${t('categoriesTitle')}<span class="period">.</span></h1></div><span class="project-count">${state.projects.length} ${t('reposCount')}</span></div><div class="category-chips"><button class="category-filter ${!state.filter ? 'selected' : ''}" data-category="">${t('allCategories')}</button>${categories.map((category) => `<button class="category-filter ${state.filter === category ? 'selected' : ''}" data-category="${escapeHTML(category)}">${escapeHTML(categoryName(category))}<span>${counts.get(category)}</span></button>`).join('')}</div><div class="category-grid">${categories.filter((category) => !state.filter || state.filter === category).map((category) => `<section class="category-section"><div class="category-heading"><div class="category-icon">${categoryIcon(category)}</div><div><h2>${escapeHTML(categoryName(category))}</h2><span>${counts.get(category)} ${state.lang === 'fr' ? 'projet(s)' : 'project(s)'}</span></div><button class="text-link" data-launch-category="${escapeHTML(category)}">${t('launchSwipe')} ${icon('arrow')}</button></div><div class="project-grid">${state.projects.filter((project) => project.category === category).map((project) => `<article class="mini-project"><a class="mini-cover" href="${escapeHTML(project.htmlUrl)}" target="_blank" rel="noreferrer">${visual(project)}<span class="mini-arrow">↗</span></a><div class="mini-content"><div class="mini-topline"><span>${escapeHTML(project.language || categoryName(category))}</span>${project.stars != null ? `<span>${icon('star')} ${project.stars}</span>` : ''}</div><h3>${escapeHTML(project.name)}</h3><p>${escapeHTML(titleFor(project))}</p><div class="tag-row">${(project.topics || []).slice(0, 3).map((topic) => `<span class="tag">${escapeHTML(topic)}</span>`).join('')}</div></div></article>`).join('')}</div></section>`).join('')}</div></section>`;
+  const counts = new Map(categories.map((category) => [category, filtered.filter((project) => project.category === category).length]));
+  return `<section class="view categories-view"><div class="view-heading"><div><p class="eyebrow">${t('allProjects')}</p><h1>${t('categoriesTitle')}<span class="period">.</span></h1></div><span class="project-count">${filtered.length} ${t(filtered.length === 1 ? 'repoCountSingular' : 'reposCount')}</span></div><div class="project-controls"><label class="project-search"><span class="sr-only">${t('searchProjects')}</span>${icon('categories')}<input type="search" data-project-search value="${escapeHTML(state.search)}" placeholder="${t('searchProjects')}" /></label><label class="sort-control"><span>${t('sortBy')}</span><select data-project-sort><option value="recent" ${state.sort === 'recent' ? 'selected' : ''}>${t('sortRecent')}</option><option value="stars" ${state.sort === 'stars' ? 'selected' : ''}>${t('sortStars')}</option><option value="name" ${state.sort === 'name' ? 'selected' : ''}>${t('sortName')}</option></select></label></div><div class="category-chips"><button class="category-filter ${!state.filter ? 'selected' : ''}" data-category="">${t('allCategories')}</button>${categories.map((category) => `<button class="category-filter ${state.filter === category ? 'selected' : ''}" data-category="${escapeHTML(category)}">${escapeHTML(categoryName(category))}<span>${counts.get(category)}</span></button>`).join('')}</div><div class="category-grid">${categories.filter((category) => (!state.filter || state.filter === category) && filtered.some((project) => project.category === category)).map((category) => `<section class="category-section"><div class="category-heading"><div class="category-icon">${categoryIcon(category)}</div><div><h2>${escapeHTML(categoryName(category))}</h2><span>${counts.get(category)} ${state.lang === 'fr' ? 'projet(s)' : 'project(s)'}</span></div><button class="text-link" data-launch-category="${escapeHTML(category)}">${t('launchSwipe')} ${icon('arrow')}</button></div><div class="project-grid">${filtered.filter((project) => project.category === category).map((project) => `<article class="mini-project"><div class="mini-cover">${visual(project)}<a class="mini-arrow" href="${escapeHTML(project.htmlUrl)}" target="_blank" rel="noreferrer" aria-label="${t('repoLink')}">↗</a><button class="mini-share" type="button" data-share-project="${escapeHTML(project.id)}" aria-label="${t('shareProject')}">${icon('share')}</button></div><div class="mini-content"><div class="mini-topline"><span>${escapeHTML(project.language || categoryName(category))}</span>${project.stars != null ? `<span>${icon('star')} ${project.stars}</span>` : ''}</div><h3>${escapeHTML(project.name)}</h3><p>${escapeHTML(titleFor(project))}</p><div class="tag-row">${(project.topics || []).slice(0, 3).map((topic) => `<span class="tag">${escapeHTML(topic)}</span>`).join('')}</div></div></article>`).join('')}</div></section>`).join('') || `<div class="empty-state search-empty"><span class="empty-star">✳</span><h2>${t('noSearchResults')}</h2></div>`}</div></section>`;
 }
 
 function renderMatches() {
@@ -177,14 +205,38 @@ function renderMatches() {
 
 function renderProfile() {
   const profile = t('profileData');
-  return `<section class="view profile-view"><div class="view-heading"><div><p class="eyebrow">${t('nav.profile')}</p><h1>${t('profileTitle')}<span class="period">.</span></h1></div><button class="language-toggle" data-action="language" aria-label="${t('selectLanguage')}">${state.lang.toUpperCase()}</button></div><div class="profile-layout"><div class="profile-main"><section class="profile-hero"><div class="portrait-placeholder" aria-label="${state.lang === 'fr' ? 'Emplacement photo à personnaliser' : 'Photo placeholder to customize'}"><span>J</span><i>PHOTO<br/>À AJOUTER</i></div><div class="profile-intro"><p class="eyebrow">${t('profileSubtitle')}</p><h2>Jules<span class="period">.</span></h2><p>${t('bio')}</p><span class="location-pin">${icon('pin')} ${t('location')}</span><span class="demo-chip">${t('demoLabel')}</span></div></section><section class="profile-section"><div class="section-title"><h2>${t('experience')}</h2><span>01</span></div><div class="timeline">${profile.experience.map((item) => `<article class="timeline-item"><span class="timeline-dot"></span><div class="timeline-top"><h3>${escapeHTML(item.role)}</h3><span>${escapeHTML(item.date)}</span></div><p class="timeline-meta">${escapeHTML(item.company)} · ${escapeHTML(item.place)}</p><p>${escapeHTML(item.description)}</p><div class="tag-row">${item.tools.map((tool) => `<span class="tag">${escapeHTML(tool)}</span>`).join('')}</div></article>`).join('')}</div></section><section class="profile-section"><div class="section-title"><h2>${t('education')}</h2><span>02</span></div>${profile.education.map((item) => `<article class="education-item"><span class="education-icon">${icon('sparkle')}</span><div><div class="timeline-top"><h3>${escapeHTML(item.program)}</h3><span>${escapeHTML(item.date)}</span></div><p class="timeline-meta">${escapeHTML(item.school)}</p><p>${escapeHTML(item.details)}</p></div></article>`).join('')}</section></div><aside class="profile-aside"><section class="contact-card"><span class="aside-mark">JB</span><h2>${t('contact')}</h2><p>${t('contactHint')}</p><div class="contact-links"><a href="https://github.com/RavenJB" target="_blank" rel="noreferrer">${icon('categories')} GitHub <span>↗</span></a><span class="contact-placeholder">LinkedIn <small>à ajouter</small></span><span class="contact-placeholder">Email <small>à ajouter</small></span></div><a class="button button-primary cv-button" href="#" aria-disabled="true" data-action="cv">${t('cvMissing')}</a></section><section class="profile-section skills-section"><div class="section-title"><h2>${t('skills')}</h2><span>03</span></div>${profile.skills.map((group) => `<div class="skill-group"><h3>${escapeHTML(group.name)}</h3><div class="tag-row">${group.items.map((skill) => `<span class="tag">${escapeHTML(skill)}</span>`).join('')}</div></div>`).join('')}<div class="skill-group"><h3>${t('languages')}</h3><div class="language-list">${profile.languages.map((language) => `<p>${escapeHTML(language)}</p>`).join('')}</div></div><p class="demo-note">${t('demoLabel')}</p></section></aside></div><footer class="site-footer"><span>LE BARON · JULES</span><span>Fait avec un peu de culot <i>✳</i></span><a href="https://github.com/RavenJB/Le-Baron" target="_blank" rel="noreferrer">GitHub ${icon('arrow')}</a></footer></section>`;
+  return `<section class="view profile-view"><div class="view-heading"><div><p class="eyebrow">${t('nav.profile')}</p><h1>${t('profileTitle')}<span class="period">.</span></h1></div><button class="language-toggle" data-action="language" aria-label="${t('selectLanguage')}">${state.lang.toUpperCase()}</button></div><div class="profile-layout"><div class="profile-main"><section class="profile-hero"><div class="portrait-placeholder" aria-label="${state.lang === 'fr' ? 'Emplacement photo à personnaliser' : 'Photo placeholder to customize'}"><span>J</span><i>PHOTO<br/>À AJOUTER</i></div><div class="profile-intro"><p class="eyebrow">${t('profileSubtitle')}</p><h2>Jules<span class="period">.</span></h2><p>${t('bio')}</p><span class="location-pin">${icon('pin')} ${t('location')}</span><span class="demo-chip">${t('demoLabel')}</span></div></section><section class="profile-section"><div class="section-title"><h2>${t('experience')}</h2><span>01</span></div><div class="timeline">${profile.experience.map((item) => `<article class="timeline-item"><span class="timeline-dot"></span><div class="timeline-top"><h3>${escapeHTML(item.role)}</h3><span>${escapeHTML(item.date)}</span></div><p class="timeline-meta">${escapeHTML(item.company)} · ${escapeHTML(item.place)}</p><p>${escapeHTML(item.description)}</p><div class="tag-row">${item.tools.map((tool) => `<span class="tag">${escapeHTML(tool)}</span>`).join('')}</div></article>`).join('')}</div></section><section class="profile-section"><div class="section-title"><h2>${t('education')}</h2><span>02</span></div>${profile.education.map((item) => `<article class="education-item"><span class="education-icon">${icon('sparkle')}</span><div><div class="timeline-top"><h3>${escapeHTML(item.program)}</h3><span>${escapeHTML(item.date)}</span></div><p class="timeline-meta">${escapeHTML(item.school)}</p><p>${escapeHTML(item.details)}</p></div></article>`).join('')}</section></div><aside class="profile-aside"><section class="contact-card"><span class="aside-mark">JB</span><h2>${t('contact')}</h2><p>${t('contactHint')}</p><div class="contact-links"><a href="https://github.com/RavenJB" target="_blank" rel="noreferrer">${icon('categories')} GitHub <span>↗</span></a><span class="contact-placeholder">LinkedIn <small>à ajouter</small></span><span class="contact-placeholder">Email <small>à ajouter</small></span></div><a class="button button-primary cv-button" href="#" aria-disabled="true" data-action="cv">${t('cvMissing')}</a></section><section class="profile-section local-settings"><h2>${t('localDataTitle')}</h2><p>${t('localDataText')}</p><button class="button button-secondary" data-action="clear-local">${t('clearLocalData')}</button><button class="button button-secondary install-button" data-action="install-app">${t('pwaInstall')}</button></section><section class="profile-section skills-section"><div class="section-title"><h2>${t('skills')}</h2><span>03</span></div>${profile.skills.map((group) => `<div class="skill-group"><h3>${escapeHTML(group.name)}</h3><div class="tag-row">${group.items.map((skill) => `<span class="tag">${escapeHTML(skill)}</span>`).join('')}</div></div>`).join('')}<div class="skill-group"><h3>${t('languages')}</h3><div class="language-list">${profile.languages.map((language) => `<p>${escapeHTML(language)}</p>`).join('')}</div></div><p class="demo-note">${t('demoLabel')}</p></section></aside></div><footer class="site-footer"><span>LE BARON · JULES</span><span>Fait avec un peu de culot <i>✳</i></span><a href="https://github.com/RavenJB/Le-Baron" target="_blank" rel="noreferrer">GitHub ${icon('arrow')}</a></footer></section>`;
 }
 
 function render() {
   document.documentElement.lang = state.lang || 'fr';
   document.documentElement.dataset.theme = state.theme;
   root.innerHTML = state.intro ? renderIntro() : `${renderHeader()}<div class="app-shell"><aside class="desktop-rail"><a class="brand-mark" href="#swipe" aria-label="Le Baron"><span>JB</span></a><div class="rail-label">LE BARON<br/>PORTFOLIO</div><nav>${['swipe', 'categories', 'matches', 'profile'].map((item) => `<a href="#${item}" data-tab="${item}" class="rail-link ${state.tab === item ? 'active' : ''}" aria-label="${t(`nav.${item}`)}">${icon(item)}<span>${t(`nav.${item}`)}</span></a>`).join('')}</nav><div class="rail-bottom"><button class="language-toggle" data-action="language">${state.lang.toUpperCase()}</button><button class="theme-button" data-action="theme" aria-label="${t('themeToggle')}">${icon(state.theme === 'light' ? 'sun' : 'moon')}</button><span>JULES © 2026</span></div></aside><main class="main-content">${state.tab === 'swipe' ? renderSwipe() : state.tab === 'categories' ? renderCategories() : state.tab === 'matches' ? renderMatches() : renderProfile()}</main></div>${renderNav()}`;
+  if (state.installPrompt) root.querySelector('.install-button')?.classList.add('install-ready');
   bindEvents();
+}
+
+let toastTimer;
+function toast(message) {
+  let node = document.querySelector('.app-toast');
+  if (!node) { node = document.createElement('div'); node.className = 'app-toast'; node.setAttribute('role', 'status'); document.body.append(node); }
+  node.textContent = message;
+  node.classList.add('visible');
+  clearTimeout(toastTimer);
+  toastTimer = window.setTimeout(() => node.classList.remove('visible'), 2400);
+}
+
+async function shareProject(projectId) {
+  const project = state.projects.find((item) => String(item.id) === String(projectId));
+  if (!project) return;
+  const url = new URL(BASE, location.origin);
+  url.hash = `project=${encodeURIComponent(project.id)}`;
+  try {
+    if (navigator.share) await navigator.share({ title: `${project.name} · Le Baron`, text: titleFor(project), url: url.href });
+    else { await navigator.clipboard.writeText(url.href); toast(t('shareCopied')); }
+  } catch (error) {
+    if (error?.name !== 'AbortError') toast(t('shareFailed'));
+  }
 }
 
 function persist() {
@@ -203,6 +255,8 @@ function decide(direction) {
   if (state.animating) return;
   const project = currentProject();
   if (!project) return;
+  state.focusProjectId = '';
+  if (location.hash.startsWith('#project=')) history.replaceState(null, '', `${location.pathname}${location.search}#swipe`);
   state.animating = true;
   const exitingCard = root.querySelector('.swipe-stage .project-card:not(.compact-card)');
   if (direction === 'like' && exitingCard) {
@@ -251,11 +305,15 @@ function bindEvents() {
   root.querySelectorAll('[data-tab]').forEach((link) => link.addEventListener('click', () => { state.tab = link.dataset.tab; state.filter = ''; state.chatId = ''; }));
   root.querySelectorAll('[data-action]').forEach((button) => button.addEventListener('click', (event) => {
     const action = button.dataset.action;
-    if (action === 'enter') { state.intro = false; state.tab = 'swipe'; location.hash = 'swipe'; render(); }
+    if (action === 'enter') { state.intro = false; state.tab = 'swipe'; location.hash = state.focusProjectId ? `project=${encodeURIComponent(state.focusProjectId)}` : 'swipe'; render(); }
     if (action === 'pass') decide('pass');
     if (action === 'like') decide('like');
     if (action === 'undo') undo();
-    if (action === 'restart') { state.history = []; state.filter = ''; persist(); render(); }
+    if (action === 'restart') { state.history = []; state.filter = ''; state.discovery = false; state.focusProjectId = ''; persist(); render(); }
+    if (action === 'discovery') { state.discovery = !state.discovery; state.focusProjectId = ''; if (state.discovery) { const featured = state.projects.slice().sort((a, b) => Number(b.featured) - Number(a.featured) || (b.stars || 0) - (a.stars || 0)).slice(0, 3); state.history = state.history.filter((item) => !featured.some((project) => String(project.id) === String(item.id))); } render(); }
+    if (action === 'surprise') { const pool = [...state.projects].sort((a, b) => Number(b.featured) - Number(a.featured) || (b.stars || 0) - (a.stars || 0)).slice(0, Math.min(3, state.projects.length)); const pick = pool[Math.floor(Math.random() * pool.length)]; if (pick) { state.focusProjectId = String(pick.id); state.discovery = true; state.tab = 'swipe'; history.replaceState(null, '', `${location.pathname}${location.search}#project=${encodeURIComponent(pick.id)}`); render(); } }
+    if (action === 'clear-local' && window.confirm(t('clearLocalConfirm'))) { state.history = []; state.matches = []; state.chatMessages = {}; state.chatId = ''; state.typing = false; state.botTypingIds.clear(); for (const key of ['le-baron-history', 'le-baron-matches', 'le-baron-chat-messages']) localStorage.removeItem(key); render(); toast(t('localDataCleared')); }
+    if (action === 'install-app') { if (state.installPrompt) { state.installPrompt.prompt(); state.installPrompt = null; render(); } else toast(t('installHint')); }
     if (action === 'clear-filter') { state.filter = ''; render(); }
     if (action === 'close-chat') { state.chatId = ''; state.typing = false; render(); }
     if (action === 'theme') { state.theme = state.theme === 'light' ? 'dark' : 'light'; localStorage.setItem('le-baron-theme', state.theme); render(); }
@@ -265,6 +323,10 @@ function bindEvents() {
   root.querySelectorAll('[data-category]').forEach((button) => button.addEventListener('click', () => { state.filter = button.dataset.category; render(); }));
   root.querySelectorAll('[data-launch-category]').forEach((button) => button.addEventListener('click', () => { state.filter = button.dataset.launchCategory; state.tab = 'swipe'; location.hash = 'swipe'; render(); }));
   root.querySelectorAll('[data-match]').forEach((button) => button.addEventListener('click', () => { state.chatId = button.dataset.match; state.typing = false; render(); }));
+  root.querySelectorAll('[data-share-project]').forEach((button) => button.addEventListener('click', (event) => { event.preventDefault(); event.stopPropagation(); shareProject(button.dataset.shareProject); }));
+  const search = root.querySelector('[data-project-search]');
+  search?.addEventListener('input', () => { const cursor = search.selectionStart; state.search = search.value; render(); const next = root.querySelector('[data-project-search]'); next?.focus(); next?.setSelectionRange(cursor, cursor); });
+  root.querySelector('[data-project-sort]')?.addEventListener('change', (event) => { state.sort = event.target.value; render(); });
   root.querySelectorAll('[data-chat-form]').forEach((form) => form.addEventListener('submit', (event) => {
     event.preventDefault();
     const input = form.querySelector('input[name="message"]');
@@ -289,10 +351,14 @@ function bindEvents() {
 }
 
 window.addEventListener('hashchange', () => {
-  if (location.hash.slice(1) && ['swipe', 'categories', 'matches', 'profile'].includes(location.hash.slice(1))) {
-    state.tab = location.hash.slice(1); state.chatId = ''; state.intro = false; render();
+  const route = location.hash.slice(1);
+  if (route.startsWith('project=')) {
+    state.focusProjectId = decodeURIComponent(route.slice(8)); state.tab = 'swipe'; state.chatId = ''; state.intro = false; render();
+  } else if (['swipe', 'categories', 'matches', 'profile'].includes(route)) {
+    state.focusProjectId = ''; state.tab = route; state.chatId = ''; state.intro = false; render();
   }
 });
+window.addEventListener('beforeinstallprompt', (event) => { event.preventDefault(); state.installPrompt = event; render(); });
 window.addEventListener('keydown', (event) => {
   if (state.intro || state.tab !== 'swipe' || /INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName)) return;
   if (event.key === 'ArrowLeft') decide('pass');
@@ -302,3 +368,4 @@ window.addEventListener('keydown', (event) => {
 
 render();
 loadProjects();
+if ('serviceWorker' in navigator && import.meta.env.PROD) navigator.serviceWorker.register(`${BASE}sw.js`, { scope: BASE }).catch(() => {});
