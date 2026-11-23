@@ -27,6 +27,12 @@ Le générateur tente de synchroniser les dépôts publics de `RavenJB` avant la
 
 Les textes d’exemple qui commencent par `[DEMO]` sont à remplacer. Pour mettre un dépôt en avant, passe `featured` à `true` dans `data/projects-overrides.json`.
 
+## Conversations et assistant
+
+Après un like, la conversation commence par le message personnalisé du projet. Les visiteurs peuvent ensuite écrire dans le chat : l’assistant local répond à quelques questions à partir des métadonnées et du texte du projet. Les messages sont conservés dans le navigateur avec `localStorage`; aucun service d’IA externe n’est appelé. Les réponses limitées sont signalées comme une démo.
+
+Pour brancher un vrai modèle conversationnel, ajoute une fonction côté serveur ou serverless qui détient la clé API. Ne place jamais cette clé dans le JavaScript livré par GitHub Pages.
+
 ## Modifier les informations du profil
 
 Les textes de l’interface et les éléments du profil se trouvent dans `data/translations/fr.json` et `data/translations/en.json`. Mets à jour les deux fichiers pour conserver les deux langues. Les coordonnées ne sont volontairement pas renseignées.

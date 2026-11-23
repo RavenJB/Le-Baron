@@ -14,6 +14,8 @@ const state = {
   filter: '',
   history: safeRead('le-baron-history', []),
   matches: safeRead('le-baron-matches', []),
+  chatMessages: safeRead('le-baron-chat-messages', {}),
+  botTypingIds: new Set(),
   chatId: '',
   typing: false,
   intro: !localStorage.getItem('le-baron-language'),
@@ -40,6 +42,10 @@ const icons = {
   code: '<path d="m8 8-4 4 4 4m8-8 4 4-4 4m-3-11-2 14"/>',
   data: '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v7c0 1.7 3.6 3 8 3s8-1.3 8-3V5m-16 7v7c0 1.7 3.6 3 8 3s8-1.3 8-3v-7"/>',
   sparkle: '<path d="m12 3 1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2L12 3Zm7 12 .9 2.1L22 18l-2.1.9L19 21l-.9-2.1L16 18l2.1-.9L19 15Z"/>',
+  send: '<path d="M21 3 10 14M21 3l-7 18-4-7-7-4 18-7Z"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>',
+  moon: '<path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"/>',
+  pin: '<path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
 };
 const icon = (name, cls = '') => `<svg class="icon ${cls}" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${icons[name] || icons.categories}</svg>`;
 const categoryIcon = (category) => {
@@ -51,9 +57,28 @@ const categoryName = (category = '') => {
   return map[state.lang]?.[category] || category || t('categoryFallback');
 };
 const titleFor = (project) => localize(project?.description) || t('projectFallback');
-const visual = (project) => project?.image
-  ? `<img class="project-image" src="${escapeHTML(project.image)}" alt="${escapeHTML(project.name)}" />`
-  : `<div class="cover-art" aria-hidden="true"><span class="cover-stamp">JB</span><span class="cover-orbit"></span><span class="cover-grid"></span><span class="cover-word">${escapeHTML(project?.language || categoryName(project?.category))}</span></div>`;
+const hashValue = (value = '') => [...String(value)].reduce((hash, char) => ((hash * 31) + char.charCodeAt(0)) >>> 0, 7);
+const visual = (project) => {
+  if (project?.image) return `<img class="project-image" src="${escapeHTML(project.image)}" alt="${escapeHTML(project.name)}" />`;
+  const seed = hashValue(project?.id || project?.name);
+  const palettes = [
+    { paper: '#f6f1e7', ink: '#111111', blue: '#2f3cff', red: '#ff4b33' },
+    { paper: '#2f3cff', ink: '#111111', blue: '#ff4b33', red: '#f6f1e7' },
+    { paper: '#ff4b33', ink: '#111111', blue: '#2f3cff', red: '#f6f1e7' },
+    { paper: '#e8e3d8', ink: '#111111', blue: '#2f3cff', red: '#ff4b33' },
+  ];
+  const palette = palettes[seed % palettes.length];
+  const motif = seed % 3;
+  const geometry = motif === 0
+    ? `<rect x="436" y="-40" width="190" height="500" rx="94" fill="${palette.red}" transform="rotate(29 436 -40)"/><path d="M0 340 600 75M0 430 600 165M40 0l360 480M140 0l360 480" stroke="${palette.ink}" stroke-opacity=".22" stroke-width="2"/>`
+    : motif === 1
+      ? `<circle cx="500" cy="166" r="146" fill="${palette.red}" stroke="${palette.ink}" stroke-width="5"/><circle cx="500" cy="166" r="92" fill="none" stroke="${palette.ink}" stroke-width="3"/><path d="M355 166h290M500 21v290" stroke="${palette.ink}" stroke-width="2"/>`
+      : `<path d="M370 0h230v480H370z" fill="${palette.red}" stroke="${palette.ink}" stroke-width="5"/><path d="M400 75h170m-170 55h130m-130 55h155m-155 55h105" stroke="${palette.ink}" stroke-width="5" stroke-linecap="square"/><circle cx="490" cy="347" r="57" fill="${palette.blue}" stroke="${palette.ink}" stroke-width="5"/>`;
+  const symbol = /python|php|code|node|javascript/i.test(`${project?.language} ${project?.category}`) ? '&lt;/&gt;' : /data|sql|database/i.test(`${project?.language} ${project?.category}`) ? 'DB' : 'JB';
+  const label = escapeHTML(project?.language || categoryName(project?.category) || 'PROJECT');
+  const name = escapeHTML(project?.name || 'Le Baron');
+  return `<svg class="project-illustration" aria-hidden="true" viewBox="0 0 600 480" preserveAspectRatio="xMidYMid slice"><rect width="600" height="480" fill="${palette.paper}"/>${geometry}<path d="M25 26h550v428H25z" fill="none" stroke="${palette.ink}" stroke-width="3"/><rect x="42" y="43" width="90" height="42" fill="${palette.blue}" stroke="${palette.ink}" stroke-width="3"/><text x="87" y="72" text-anchor="middle" fill="${palette.paper}" font-family="DM Mono,monospace" font-size="19" font-weight="700">${symbol}</text><text x="43" y="383" fill="${palette.ink}" font-family="DM Mono,monospace" font-size="14" letter-spacing="2">${label.toUpperCase()}</text><text x="41" y="426" fill="${palette.ink}" font-family="Bricolage Grotesque,system-ui,sans-serif" font-size="27" font-weight="800">${name.length > 25 ? `${name.slice(0, 22)}…` : name}</text><path d="M518 410h36m-18-18v36" stroke="${palette.red}" stroke-width="8"/></svg>`;
+};
 
 async function loadProjects() {
   try {
@@ -76,7 +101,7 @@ function renderNav() {
 }
 
 function renderHeader() {
-  return `<header class="mobile-header"><a class="wordmark" href="#swipe"><span class="brand-mark small"><span>JB</span></span><span>Le Baron<span class="wordmark-dot">.</span></span></a><button class="theme-button" data-action="theme" aria-label="${t('themeToggle')}">${state.theme === 'light' ? '☼' : '◐'}</button></header>`;
+  return `<header class="mobile-header"><a class="wordmark" href="#swipe"><span class="brand-mark small"><span>JB</span></span><span>Le Baron<span class="wordmark-dot">.</span></span></a><button class="theme-button" data-action="theme" aria-label="${t('themeToggle')}">${icon(state.theme === 'light' ? 'sun' : 'moon')}</button></header>`;
 }
 
 function projectCard(project, index = 0, compact = false) {
@@ -87,7 +112,51 @@ function projectCard(project, index = 0, compact = false) {
 function renderChat(project, modal = false) {
   if (!project) return '';
   const message = localize(project.message) || `[DEMO] ${state.lang === 'fr' ? `Je te raconterai bientôt l’histoire de ${project.name}.` : `I’ll share the story behind ${project.name} soon.`}`;
-  return `<section class="chat-panel ${modal ? 'chat-modal' : ''}" aria-label="${t('conversation')}"><div class="chat-head"><span class="chat-avatar">JB</span><div><p class="chat-title">${t('conversation')}</p><span class="chat-presence">${state.typing ? t('writing') : 'Jules · Le Baron'}</span></div><button class="icon-button chat-close" data-action="close-chat" aria-label="${state.lang === 'fr' ? 'Fermer la conversation' : 'Close conversation'}">${icon('close')}</button></div><div class="chat-body"><div class="chat-project-chip">${visual(project)}<span>${escapeHTML(project.name)}</span></div>${state.typing ? `<div class="typing-bubble"><i></i><i></i><i></i></div>` : `<p class="chat-message">${escapeHTML(message)}</p><a class="button button-primary repo-button" href="${escapeHTML(project.htmlUrl)}" target="_blank" rel="noreferrer">${t('repoLink')} ${icon('arrow')}</a>`}</div></section>`;
+  const chatKey = String(project.id);
+  const messages = Array.isArray(state.chatMessages[chatKey]) ? state.chatMessages[chatKey] : [];
+  const authorMessage = state.typing && String(state.chatId) === chatKey
+    ? `<div class="typing-row"><span>${t('writing')}</span><div class="typing-bubble"><i></i><i></i><i></i></div></div>`
+    : `<p class="chat-message chat-message-jules">${escapeHTML(message)}</p>`;
+  const conversation = messages.map((item) => `<p class="chat-message ${item.role === 'user' ? 'chat-message-user' : 'chat-message-bot'}"><span>${item.role === 'user' ? (state.lang === 'fr' ? 'Toi' : 'You') : t('chatAssistantLabel')}</span>${escapeHTML(item.text)}</p>`).join('');
+  const botTyping = state.botTypingIds.has(chatKey)
+    ? `<div class="typing-row bot-typing" aria-live="polite"><span>${t('chatBotTyping')}</span><div class="typing-bubble"><i></i><i></i><i></i></div></div>`
+    : '';
+  return `<section class="chat-panel ${modal ? 'chat-modal' : ''}" aria-label="${t('conversation')}"><div class="chat-head"><span class="chat-avatar">JB</span><div><p class="chat-title">${t('conversation')}</p><span class="chat-presence">Jules · Le Baron</span></div><button class="icon-button chat-close" data-action="close-chat" aria-label="${state.lang === 'fr' ? 'Fermer la conversation' : 'Close conversation'}">${icon('close')}</button></div><div class="chat-body"><div class="chat-project-chip">${visual(project)}<span>${escapeHTML(project.name)}</span><a class="repo-open" href="${escapeHTML(project.htmlUrl)}" target="_blank" rel="noreferrer" aria-label="${t('repoLink')}">↗</a></div><div class="chat-assistant-label"><span class="online-dot"></span>${t('chatAssistantLabel')}</div><div class="chat-stream" role="log" aria-live="polite">${authorMessage}${conversation}${botTyping}</div><a class="button button-primary repo-button" href="${escapeHTML(project.htmlUrl)}" target="_blank" rel="noreferrer">${t('repoLink')} ${icon('arrow')}</a><p class="chat-quick-label">${t('chatQuickPromptLabel')}</p><div class="chat-quick-prompts"><button type="button" data-chat-prompt="tech" data-project-id="${escapeHTML(chatKey)}">${t('chatPromptTech')}</button><button type="button" data-chat-prompt="repo" data-project-id="${escapeHTML(chatKey)}">${t('chatPromptRepo')}</button><button type="button" data-chat-prompt="about" data-project-id="${escapeHTML(chatKey)}">${t('chatPromptAbout')}</button></div><form class="chat-composer" data-chat-form data-project-id="${escapeHTML(chatKey)}"><label class="sr-only" for="chat-input-${escapeHTML(chatKey)}">${t('chatInputLabel')}</label><input id="chat-input-${escapeHTML(chatKey)}" name="message" type="text" maxlength="500" autocomplete="off" placeholder="${t('chatPlaceholder')}" ${state.botTypingIds.has(chatKey) || (state.typing && String(state.chatId) === chatKey) ? 'disabled' : ''} /><button class="chat-send" type="submit" aria-label="${t('chatSend')}" ${state.botTypingIds.has(chatKey) || (state.typing && String(state.chatId) === chatKey) ? 'disabled' : ''}>${icon('send')}</button></form></div></section>`;
+}
+
+function getBotReply(project, text) {
+  const question = String(text).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  if (/\b(bonjour|salut|hello|hi|hey)\b/.test(question)) return t('chatHello');
+  if (/(techn|stack|langage|language|framework|outil|techno)/.test(question)) {
+    const items = [...new Set([project.language, ...(project.topics || [])].filter(Boolean))];
+    return items.length ? t('chatTechKnown').replace('{items}', items.join(', ')) : t('chatTechUnknown');
+  }
+  if (/(description|de quoi|projet|project|idee|idée)/.test(question)) {
+    const description = titleFor(project);
+    return description.includes('[DEMO]') ? t('chatDescriptionDemo') : description;
+  }
+  if (/(github|repo|code|source|lien|link)/.test(question)) return t('chatRepoAnswer');
+  if (/(jules|contact|email|linkedin|experience|expérience|formation|profil|about)/.test(question)) return t('chatContactAnswer');
+  return t('chatFallback');
+}
+
+function sendChat(projectId, text) {
+  const content = String(text || '').trim().slice(0, 500);
+  if (!content || state.botTypingIds.has(String(projectId))) return;
+  const project = state.projects.find((item) => String(item.id) === String(projectId)) || state.matches.find((item) => String(item.id) === String(projectId));
+  if (!project) return;
+  const key = String(project.id);
+  state.chatMessages[key] ??= [];
+  state.chatMessages[key].push({ role: 'user', text: content });
+  state.botTypingIds.add(key);
+  persist();
+  render();
+  window.setTimeout(() => {
+    state.chatMessages[key].push({ role: 'assistant', text: getBotReply(project, content) });
+    state.botTypingIds.delete(key);
+    persist();
+    render();
+  }, 650);
 }
 
 function renderSwipe() {
@@ -108,19 +177,20 @@ function renderMatches() {
 
 function renderProfile() {
   const profile = t('profileData');
-  return `<section class="view profile-view"><div class="view-heading"><div><p class="eyebrow">${t('nav.profile')}</p><h1>${t('profileTitle')}<span class="period">.</span></h1></div><button class="language-toggle" data-action="language" aria-label="${t('selectLanguage')}">${state.lang.toUpperCase()}</button></div><div class="profile-layout"><div class="profile-main"><section class="profile-hero"><div class="portrait-placeholder" aria-label="${state.lang === 'fr' ? 'Emplacement photo à personnaliser' : 'Photo placeholder to customize'}"><span>J</span><i>PHOTO<br/>À AJOUTER</i></div><div class="profile-intro"><p class="eyebrow">${t('profileSubtitle')}</p><h2>Jules<span class="period">.</span></h2><p>${t('bio')}</p><span class="location-pin">⌖ ${t('location')}</span><span class="demo-chip">${t('demoLabel')}</span></div></section><section class="profile-section"><div class="section-title"><h2>${t('experience')}</h2><span>01</span></div><div class="timeline">${profile.experience.map((item) => `<article class="timeline-item"><span class="timeline-dot"></span><div class="timeline-top"><h3>${escapeHTML(item.role)}</h3><span>${escapeHTML(item.date)}</span></div><p class="timeline-meta">${escapeHTML(item.company)} · ${escapeHTML(item.place)}</p><p>${escapeHTML(item.description)}</p><div class="tag-row">${item.tools.map((tool) => `<span class="tag">${escapeHTML(tool)}</span>`).join('')}</div></article>`).join('')}</div></section><section class="profile-section"><div class="section-title"><h2>${t('education')}</h2><span>02</span></div>${profile.education.map((item) => `<article class="education-item"><span class="education-icon">✳</span><div><div class="timeline-top"><h3>${escapeHTML(item.program)}</h3><span>${escapeHTML(item.date)}</span></div><p class="timeline-meta">${escapeHTML(item.school)}</p><p>${escapeHTML(item.details)}</p></div></article>`).join('')}</section></div><aside class="profile-aside"><section class="contact-card"><span class="aside-mark">JB</span><h2>${t('contact')}</h2><p>${t('contactHint')}</p><div class="contact-links"><a href="https://github.com/RavenJB" target="_blank" rel="noreferrer">${icon('categories')} GitHub <span>↗</span></a><span class="contact-placeholder">LinkedIn <small>à ajouter</small></span><span class="contact-placeholder">Email <small>à ajouter</small></span></div><a class="button button-primary cv-button" href="#" aria-disabled="true" data-action="cv">${t('cvMissing')}</a></section><section class="profile-section skills-section"><div class="section-title"><h2>${t('skills')}</h2><span>03</span></div>${profile.skills.map((group) => `<div class="skill-group"><h3>${escapeHTML(group.name)}</h3><div class="tag-row">${group.items.map((skill) => `<span class="tag">${escapeHTML(skill)}</span>`).join('')}</div></div>`).join('')}<div class="skill-group"><h3>${t('languages')}</h3><div class="language-list">${profile.languages.map((language) => `<p>${escapeHTML(language)}</p>`).join('')}</div></div><p class="demo-note">${t('demoLabel')}</p></section></aside></div><footer class="site-footer"><span>LE BARON · JULES</span><span>Fait avec un peu de culot <i>✳</i></span><a href="https://github.com/RavenJB/Le-Baron" target="_blank" rel="noreferrer">GitHub ${icon('arrow')}</a></footer></section>`;
+  return `<section class="view profile-view"><div class="view-heading"><div><p class="eyebrow">${t('nav.profile')}</p><h1>${t('profileTitle')}<span class="period">.</span></h1></div><button class="language-toggle" data-action="language" aria-label="${t('selectLanguage')}">${state.lang.toUpperCase()}</button></div><div class="profile-layout"><div class="profile-main"><section class="profile-hero"><div class="portrait-placeholder" aria-label="${state.lang === 'fr' ? 'Emplacement photo à personnaliser' : 'Photo placeholder to customize'}"><span>J</span><i>PHOTO<br/>À AJOUTER</i></div><div class="profile-intro"><p class="eyebrow">${t('profileSubtitle')}</p><h2>Jules<span class="period">.</span></h2><p>${t('bio')}</p><span class="location-pin">${icon('pin')} ${t('location')}</span><span class="demo-chip">${t('demoLabel')}</span></div></section><section class="profile-section"><div class="section-title"><h2>${t('experience')}</h2><span>01</span></div><div class="timeline">${profile.experience.map((item) => `<article class="timeline-item"><span class="timeline-dot"></span><div class="timeline-top"><h3>${escapeHTML(item.role)}</h3><span>${escapeHTML(item.date)}</span></div><p class="timeline-meta">${escapeHTML(item.company)} · ${escapeHTML(item.place)}</p><p>${escapeHTML(item.description)}</p><div class="tag-row">${item.tools.map((tool) => `<span class="tag">${escapeHTML(tool)}</span>`).join('')}</div></article>`).join('')}</div></section><section class="profile-section"><div class="section-title"><h2>${t('education')}</h2><span>02</span></div>${profile.education.map((item) => `<article class="education-item"><span class="education-icon">${icon('sparkle')}</span><div><div class="timeline-top"><h3>${escapeHTML(item.program)}</h3><span>${escapeHTML(item.date)}</span></div><p class="timeline-meta">${escapeHTML(item.school)}</p><p>${escapeHTML(item.details)}</p></div></article>`).join('')}</section></div><aside class="profile-aside"><section class="contact-card"><span class="aside-mark">JB</span><h2>${t('contact')}</h2><p>${t('contactHint')}</p><div class="contact-links"><a href="https://github.com/RavenJB" target="_blank" rel="noreferrer">${icon('categories')} GitHub <span>↗</span></a><span class="contact-placeholder">LinkedIn <small>à ajouter</small></span><span class="contact-placeholder">Email <small>à ajouter</small></span></div><a class="button button-primary cv-button" href="#" aria-disabled="true" data-action="cv">${t('cvMissing')}</a></section><section class="profile-section skills-section"><div class="section-title"><h2>${t('skills')}</h2><span>03</span></div>${profile.skills.map((group) => `<div class="skill-group"><h3>${escapeHTML(group.name)}</h3><div class="tag-row">${group.items.map((skill) => `<span class="tag">${escapeHTML(skill)}</span>`).join('')}</div></div>`).join('')}<div class="skill-group"><h3>${t('languages')}</h3><div class="language-list">${profile.languages.map((language) => `<p>${escapeHTML(language)}</p>`).join('')}</div></div><p class="demo-note">${t('demoLabel')}</p></section></aside></div><footer class="site-footer"><span>LE BARON · JULES</span><span>Fait avec un peu de culot <i>✳</i></span><a href="https://github.com/RavenJB/Le-Baron" target="_blank" rel="noreferrer">GitHub ${icon('arrow')}</a></footer></section>`;
 }
 
 function render() {
   document.documentElement.lang = state.lang || 'fr';
   document.documentElement.dataset.theme = state.theme;
-  root.innerHTML = state.intro ? renderIntro() : `${renderHeader()}<div class="app-shell"><aside class="desktop-rail"><a class="brand-mark" href="#swipe" aria-label="Le Baron"><span>JB</span></a><div class="rail-label">LE BARON<br/>PORTFOLIO</div><nav>${['swipe', 'categories', 'matches', 'profile'].map((item) => `<a href="#${item}" data-tab="${item}" class="rail-link ${state.tab === item ? 'active' : ''}" aria-label="${t(`nav.${item}`)}">${icon(item)}<span>${t(`nav.${item}`)}</span></a>`).join('')}</nav><div class="rail-bottom"><button class="language-toggle" data-action="language">${state.lang.toUpperCase()}</button><button class="theme-button" data-action="theme" aria-label="${t('themeToggle')}">${state.theme === 'light' ? '☼' : '◐'}</button><span>JULES © 2026</span></div></aside><main class="main-content">${state.tab === 'swipe' ? renderSwipe() : state.tab === 'categories' ? renderCategories() : state.tab === 'matches' ? renderMatches() : renderProfile()}</main></div>${renderNav()}`;
+  root.innerHTML = state.intro ? renderIntro() : `${renderHeader()}<div class="app-shell"><aside class="desktop-rail"><a class="brand-mark" href="#swipe" aria-label="Le Baron"><span>JB</span></a><div class="rail-label">LE BARON<br/>PORTFOLIO</div><nav>${['swipe', 'categories', 'matches', 'profile'].map((item) => `<a href="#${item}" data-tab="${item}" class="rail-link ${state.tab === item ? 'active' : ''}" aria-label="${t(`nav.${item}`)}">${icon(item)}<span>${t(`nav.${item}`)}</span></a>`).join('')}</nav><div class="rail-bottom"><button class="language-toggle" data-action="language">${state.lang.toUpperCase()}</button><button class="theme-button" data-action="theme" aria-label="${t('themeToggle')}">${icon(state.theme === 'light' ? 'sun' : 'moon')}</button><span>JULES © 2026</span></div></aside><main class="main-content">${state.tab === 'swipe' ? renderSwipe() : state.tab === 'categories' ? renderCategories() : state.tab === 'matches' ? renderMatches() : renderProfile()}</main></div>${renderNav()}`;
   bindEvents();
 }
 
 function persist() {
   localStorage.setItem('le-baron-history', JSON.stringify(state.history));
   localStorage.setItem('le-baron-matches', JSON.stringify(state.matches));
+  localStorage.setItem('le-baron-chat-messages', JSON.stringify(state.chatMessages));
 }
 
 function chooseLanguage(lang) {
@@ -135,6 +205,14 @@ function decide(direction) {
   if (!project) return;
   state.animating = true;
   const exitingCard = root.querySelector('.swipe-stage .project-card:not(.compact-card)');
+  if (direction === 'like' && exitingCard) {
+    const burst = document.createElement('div');
+    burst.className = 'like-burst';
+    burst.setAttribute('aria-hidden', 'true');
+    burst.innerHTML = '<i class="burst-cross burst-cross-one"></i><i class="burst-cross burst-cross-two"></i><i class="burst-dot burst-dot-one"></i><i class="burst-dot burst-dot-two"></i><svg class="burst-heart" viewBox="0 0 48 48" fill="none"><path d="M24 41S5 29 5 16.5C5 5 20 2 24 14 28 2 43 5 43 16.5 43 29 24 41 24 41Z" fill="#ff4b33" stroke="#111" stroke-width="2.5" stroke-linejoin="round"/></svg>';
+    exitingCard.querySelector('.card-media')?.append(burst);
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) window.navigator.vibrate?.(14);
+  }
   exitingCard?.classList.add(direction === 'like' ? 'depart-right' : 'depart-left');
   state.history.push({ id: project.id, direction });
   state.dragX = 0;
@@ -154,7 +232,7 @@ function decide(direction) {
       state.typing = false;
       render();
     }, 800);
-  }, 220);
+  }, direction === 'like' ? 380 : 220);
 }
 
 function undo() {
@@ -187,6 +265,19 @@ function bindEvents() {
   root.querySelectorAll('[data-category]').forEach((button) => button.addEventListener('click', () => { state.filter = button.dataset.category; render(); }));
   root.querySelectorAll('[data-launch-category]').forEach((button) => button.addEventListener('click', () => { state.filter = button.dataset.launchCategory; state.tab = 'swipe'; location.hash = 'swipe'; render(); }));
   root.querySelectorAll('[data-match]').forEach((button) => button.addEventListener('click', () => { state.chatId = button.dataset.match; state.typing = false; render(); }));
+  root.querySelectorAll('[data-chat-form]').forEach((form) => form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const input = form.querySelector('input[name="message"]');
+    sendChat(form.dataset.projectId, input?.value);
+  }));
+  root.querySelectorAll('[data-chat-prompt]').forEach((button) => button.addEventListener('click', () => {
+    const questions = {
+      tech: state.lang === 'fr' ? 'Quelles technologies utilise ce projet ?' : 'Which technologies does this project use?',
+      repo: state.lang === 'fr' ? 'Où puis-je voir le code source ?' : 'Where can I see the source code?',
+      about: state.lang === 'fr' ? 'Qui est Jules ?' : 'Who is Jules?',
+    };
+    sendChat(button.dataset.projectId, questions[button.dataset.chatPrompt]);
+  }));
   const card = root.querySelector('.swipe-stage .project-card:not(.compact-card)');
   if (card) {
     card.addEventListener('pointerdown', (event) => { if (event.target.closest('a,button')) return; card.setPointerCapture(event.pointerId); card.dataset.startX = String(event.clientX); });
@@ -194,6 +285,7 @@ function bindEvents() {
     card.addEventListener('pointerup', (event) => { if (!card.hasPointerCapture(event.pointerId)) return; card.releasePointerCapture(event.pointerId); if (Math.abs(state.dragX) > 90) decide(state.dragX > 0 ? 'like' : 'pass'); else { state.dragX = 0; card.style.setProperty('--drag-x', '0px'); card.style.setProperty('--drag-rot', '0deg'); card.classList.remove('drag-like', 'drag-pass'); } });
     card.addEventListener('pointercancel', () => { state.dragX = 0; render(); });
   }
+  root.querySelectorAll('.chat-stream').forEach((stream) => { stream.scrollTop = stream.scrollHeight; });
 }
 
 window.addEventListener('hashchange', () => {
