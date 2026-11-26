@@ -6,7 +6,12 @@
   "introText": "Des projets à swiper, des histoires à raconter. Bienvenue chez Le Baron.",
   "enter": "Entrer dans l’expérience",
   "selectLanguage": "Choisis ta langue",
-  "nav": { "swipe": "Swipe", "categories": "Catégories", "matches": "Matchs", "profile": "Profil" },
+  "nav": {
+    "swipe": "Swipe",
+    "categories": "Catégories",
+    "matches": "Matchs",
+    "profile": "Profil"
+  },
   "swipeTitle": "À découvrir",
   "swipeHint": "Glisse la carte ou utilise ← et →",
   "discoveryStart": "Parcours express",
@@ -48,7 +53,7 @@
   "chatTechUnknown": "Je n’ai pas encore les langages de ce dépôt dans mes données. Tu peux vérifier le dépôt GitHub directement.",
   "chatDescriptionDemo": "La description de cette carte est encore un texte [DEMO]. Jules pourra la remplacer par les détails réels du projet.",
   "chatRepoAnswer": "Le code et les informations à jour se trouvent sur GitHub. Le bouton du dépôt est juste ici.",
-  "chatContactAnswer": "Jules est étudiant en informatique. Ses liens LinkedIn et email restent à ajouter sur le profil.",
+  "chatContactAnswer": "Jules est alternant analyste développeur logiciel chez Euro-Information Developments et recherche un stage international de 12 à 14 semaines pour le printemps ou l’été 2027. Ses coordonnées figurent sur le profil.",
   "chatFallback": "Je suis un assistant local de démonstration, avec des réponses limitées aux informations de cette page. Essaie de demander les technologies, la description ou le dépôt GitHub.",
   "chatQuickPromptLabel": "Questions rapides",
   "chatSendError": "Le message n’a pas pu être envoyé. Réessaie.",
@@ -58,16 +63,16 @@
   "allCategories": "Toutes",
   "launchSwipe": "Swiper cette catégorie",
   "profileTitle": "À propos de Jules",
-  "profileSubtitle": "Étudiant en informatique",
-  "bio": "[DEMO] Curieux de nature, j’aime transformer une idée en expérience numérique claire, utile et un peu inattendue.",
-  "location": "Localisation à ajouter",
+  "profileSubtitle": "Alternant analyste développeur logiciel",
+  "bio": "Alternant chez Euro-Information Developments, je contribue au cadrage et au développement d’évolutions d’applications bancaires. Je recherche un stage international en ingénierie logicielle de 12 à 14 semaines au printemps ou à l’été 2027.",
+  "location": "",
   "contact": "On se parle ?",
-  "contactHint": "Email et liens à ajouter",
+  "contactHint": "E-mail et profil LinkedIn",
   "experience": "Expérience",
   "education": "Formation",
   "skills": "Compétences",
   "languages": "Langues",
-  "cv": "Voir mon CV",
+  "cv": "Voir mon CV (EN)",
   "cvMissing": "CV à ajouter",
   "demoLabel": "EXEMPLE À PERSONNALISER",
   "themeLight": "Mode clair",
@@ -98,9 +103,105 @@
   "installHint": "Utilise le menu de ton navigateur pour ajouter le site à l’écran d’accueil.",
   "featured": "Projet phare",
   "profileData": {
-    "experience": [{ "role": "[DEMO] Développeur web", "company": "[DEMO] Projet étudiant", "date": "[DEMO] 2025 — aujourd’hui", "place": "[DEMO] France", "description": "[DEMO] Conception d’interfaces accessibles et intégration de fonctionnalités web.", "tools": ["JavaScript", "HTML", "CSS"] }],
-    "education": [{ "program": "[DEMO] Formation en informatique", "school": "[DEMO] Établissement à renseigner", "date": "[DEMO] 2024 — aujourd’hui", "details": "[DEMO] Parcours et spécialité à personnaliser." }],
-    "skills": [{ "name": "Web", "items": ["HTML", "CSS", "JavaScript"] }, { "name": "Outils", "items": ["Git", "Node.js"] }],
-    "languages": ["[DEMO] Français — courant", "[DEMO] Anglais — niveau à préciser"]
+    "experience": [
+      {
+        "role": "Analyste développeur logiciel en alternance",
+        "company": "Euro-Information Developments",
+        "date": "sept. 2025 — août 2028",
+        "place": "",
+        "description": "Cadrage de demandes métier en contexte bancaire, rédaction de spécifications fonctionnelles, estimation et développement d’évolutions sur des applications internes en C# et XAML. Participation aux qualifications, tests, à la CI/CD et aux mises en production.",
+        "tools": [
+          "C#",
+          "XAML",
+          "CI/CD"
+        ]
+      },
+      {
+        "role": "Stagiaire développeur full stack",
+        "company": "ESI4U",
+        "date": "mars 2025 — juin 2025",
+        "place": "",
+        "description": "Conception et mise en production d’une application de gestion associative pour les accès et les inventaires. Réalisation des droits par rôle, du contrôle par badge RFID, ainsi que des parcours d’emprunt, de retour et de suivi du matériel.",
+        "tools": [
+          "PHP",
+          "phpMyAdmin",
+          "RFID"
+        ]
+      },
+      {
+        "role": "Développeur IA",
+        "company": "LISIC · laboratoire informatique, signal et image",
+        "date": "mai 2024 — juil. 2024",
+        "place": "",
+        "description": "Création et augmentation d’un jeu d’images hyperspectrales, puis développement et entraînement d’un modèle d’apprentissage profond pour détecter des papillons nuisibles aux cultures. Vérification du modèle par comparaison d’images.",
+        "tools": [
+          "Apprentissage profond",
+          "Images hyperspectrales"
+        ]
+      }
+    ],
+    "education": [
+      {
+        "program": "Master en informatique",
+        "school": "INSA Hauts-de-France",
+        "date": "sept. 2025 — août 2028",
+        "details": "Diplôme prévu en août 2028."
+      },
+      {
+        "program": "Licence en informatique",
+        "school": "IUT de Calais",
+        "date": "sept. 2022 — juil. 2025",
+        "details": "Diplôme obtenu en juillet 2025."
+      }
+    ],
+    "skills": [
+      {
+        "name": "Langages et bases de données",
+        "items": [
+          "Java",
+          "Python",
+          "HTML",
+          "CSS",
+          "JavaScript",
+          "PHP",
+          "SQL",
+          "PostgreSQL",
+          "Supabase"
+        ]
+      },
+      {
+        "name": "Frameworks",
+        "items": [
+          "Vue.js",
+          "Node.js",
+          "Symfony",
+          "Laravel"
+        ]
+      },
+      {
+        "name": "DevOps et cloud",
+        "items": [
+          "Docker",
+          "GitHub Actions",
+          "Linux",
+          "CI/CD",
+          "Git"
+        ]
+      },
+      {
+        "name": "Concepts",
+        "items": [
+          "Programmation orientée objet",
+          "Architecture logicielle",
+          "Intégration IA",
+          "Développement piloté par les tests"
+        ]
+      }
+    ],
+    "languages": [
+      "Français — langue maternelle",
+      "Anglais — C1, TOEIC 895/990",
+      "Espagnol — notions"
+    ]
   }
 }

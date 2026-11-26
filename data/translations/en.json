@@ -6,7 +6,12 @@
   "introText": "Projects to swipe, stories to tell. Welcome to Le Baron.",
   "enter": "Enter the experience",
   "selectLanguage": "Choose your language",
-  "nav": { "swipe": "Swipe", "categories": "Categories", "matches": "Matches", "profile": "Profile" },
+  "nav": {
+    "swipe": "Swipe",
+    "categories": "Categories",
+    "matches": "Matches",
+    "profile": "Profile"
+  },
   "swipeTitle": "Meet the projects",
   "swipeHint": "Swipe the card or use ← and →",
   "discoveryStart": "Quick tour",
@@ -48,7 +53,7 @@
   "chatTechUnknown": "I don’t have this repository’s languages in my data yet. You can check the GitHub repository directly.",
   "chatDescriptionDemo": "This card’s description is still demo copy. Jules can replace it with the project’s real details.",
   "chatRepoAnswer": "The code and current details are on GitHub. The repository button is right here.",
-  "chatContactAnswer": "Jules is a computer science student. His LinkedIn and email links still need to be added to the profile.",
+  "chatContactAnswer": "Jules is a Software Development Analyst apprentice at Euro-Information Developments and is seeking an international 12–14 week internship for Spring or Summer 2027. His contact details are on the profile.",
   "chatFallback": "I’m a local demo assistant, with answers limited to information on this page. Try asking about the technologies, description, or GitHub repository.",
   "chatQuickPromptLabel": "Quick questions",
   "chatSendError": "Your message could not be sent. Please try again.",
@@ -58,16 +63,16 @@
   "allCategories": "All",
   "launchSwipe": "Swipe this category",
   "profileTitle": "About Jules",
-  "profileSubtitle": "Computer science student",
-  "bio": "[DEMO] Naturally curious, I like turning ideas into digital experiences that are clear, useful, and a little unexpected.",
-  "location": "Location to be added",
+  "profileSubtitle": "Software Development Analyst Apprentice",
+  "bio": "As an apprentice at Euro-Information Developments, I scope and build enhancements for internal banking applications. I am seeking an international 12–14 week Software Engineering internship in Spring or Summer 2027.",
+  "location": "",
   "contact": "Let’s talk",
-  "contactHint": "Email and links to be added",
+  "contactHint": "Email and LinkedIn profile",
   "experience": "Experience",
   "education": "Education",
   "skills": "Skills",
   "languages": "Languages",
-  "cv": "View my CV",
+  "cv": "View my CV (EN)",
   "cvMissing": "CV to be added",
   "demoLabel": "SAMPLE — CUSTOMIZE ME",
   "themeLight": "Light mode",
@@ -98,9 +103,105 @@
   "installHint": "Use your browser menu to add this site to your home screen.",
   "featured": "Featured project",
   "profileData": {
-    "experience": [{ "role": "[DEMO] Web developer", "company": "[DEMO] Student project", "date": "[DEMO] 2025 — present", "place": "[DEMO] France", "description": "[DEMO] Designing accessible interfaces and building web features.", "tools": ["JavaScript", "HTML", "CSS"] }],
-    "education": [{ "program": "[DEMO] Computer science studies", "school": "[DEMO] School to be added", "date": "[DEMO] 2024 — present", "details": "[DEMO] Customize your program and focus." }],
-    "skills": [{ "name": "Web", "items": ["HTML", "CSS", "JavaScript"] }, { "name": "Tools", "items": ["Git", "Node.js"] }],
-    "languages": ["[DEMO] French — fluent", "[DEMO] English — level to confirm"]
+    "experience": [
+      {
+        "role": "Apprentice Software Development Analyst",
+        "company": "Euro-Information Developments",
+        "date": "Sep 2025 — Aug 2028",
+        "place": "",
+        "description": "Scope business requests in banking, write functional specifications, estimate and develop enhancements for internal applications using C# and XAML. Contribute to qualification and test campaigns, CI/CD, and production releases.",
+        "tools": [
+          "C#",
+          "XAML",
+          "CI/CD"
+        ]
+      },
+      {
+        "role": "Full Stack Developer Intern",
+        "company": "ESI4U",
+        "date": "Mar 2025 — Jun 2025",
+        "place": "",
+        "description": "Built and deployed an association management application for access control and equipment inventory. Implemented role-based access, RFID badge checks, and equipment checkout, return, and tracking workflows.",
+        "tools": [
+          "PHP",
+          "phpMyAdmin",
+          "RFID"
+        ]
+      },
+      {
+        "role": "AI Developer",
+        "company": "LISIC · Computer Science, Signal and Image Laboratory",
+        "date": "May 2024 — Jul 2024",
+        "place": "",
+        "description": "Created and augmented a hyperspectral image dataset, then developed and trained a deep-learning model to detect crop-damaging butterflies. Checked the model using image comparisons.",
+        "tools": [
+          "Deep learning",
+          "Hyperspectral imaging"
+        ]
+      }
+    ],
+    "education": [
+      {
+        "program": "Master of Science in Computer Science",
+        "school": "INSA Hauts-de-France",
+        "date": "Sep 2025 — Aug 2028",
+        "details": "Expected graduation: August 2028."
+      },
+      {
+        "program": "Bachelor of Science in Computer Science",
+        "school": "IUT de Calais",
+        "date": "Sep 2022 — Jul 2025",
+        "details": "Graduated in July 2025."
+      }
+    ],
+    "skills": [
+      {
+        "name": "Languages and databases",
+        "items": [
+          "Java",
+          "Python",
+          "HTML",
+          "CSS",
+          "JavaScript",
+          "PHP",
+          "SQL",
+          "PostgreSQL",
+          "Supabase"
+        ]
+      },
+      {
+        "name": "Frameworks",
+        "items": [
+          "Vue.js",
+          "Node.js",
+          "Symfony",
+          "Laravel"
+        ]
+      },
+      {
+        "name": "DevOps and cloud",
+        "items": [
+          "Docker",
+          "GitHub Actions",
+          "Linux",
+          "CI/CD",
+          "Git"
+        ]
+      },
+      {
+        "name": "Concepts",
+        "items": [
+          "Object-Oriented Programming",
+          "System Design",
+          "AI Integration",
+          "Test-Driven Development"
+        ]
+      }
+    ],
+    "languages": [
+      "French — Native",
+      "English — C1, TOEIC 895/990",
+      "Spanish — Basic"
+    ]
   }
 }

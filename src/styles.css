@@ -323,7 +323,7 @@ input { caret-color: var(--tomato); }
 .contact-links > a span { margin-left: auto; color: var(--tomato); }
 .contact-placeholder { justify-content: space-between; color: var(--muted); }
 .contact-placeholder small { color: var(--tomato); font: 8px var(--mono); text-transform: uppercase; }
-.cv-button { width: 100%; background: var(--ink); color: var(--paper); opacity: .55; cursor: not-allowed; }
+.cv-button { width: 100%; background: var(--ink); color: var(--paper); }
 .skills-section { padding-top: 4px; }
 .skill-group { margin-bottom: 17px; }
 .skill-group h3 { margin: 0 0 7px; color: var(--muted); font: 9px var(--mono); text-transform: uppercase; }

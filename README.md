@@ -59,7 +59,7 @@ Les couleurs principales et les variantes du thème sombre se trouvent au début
 ## Photo et CV
 
 - Remplace le bloc `.portrait-placeholder` dans `src/main.js` par une image dans `public/assets/` lorsque ta photo est prête.
-- Place le CV dans `public/assets/cv-jules-baron.pdf`, puis remplace le bouton désactivé de `renderProfile()` par un lien vers ce fichier. Si tu ajoutes une version anglaise, crée un bouton dédié ou lie le bon PDF selon la langue active.
+- Le bouton du profil ouvre `public/assets/cv-jules-baron.pdf` (version anglaise). Remplace ce fichier pour mettre le CV à jour.
 
 ## Données GitHub et déploiement
 
